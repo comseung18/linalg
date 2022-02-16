@@ -1,6 +1,7 @@
 from linalg import *
 from matrix import Matrix
 from matrix import EPSILON
+import cmath
 
 
 # 2차 선형 점화관계식을 풉니다.
@@ -70,9 +71,7 @@ def sol_linear_diff_b():
         print(tmp)
 
 
-# sol_linear()
 a = Matrix.from_input()
-d, p = diagonalization(a)
-print(inverse_matrix(p))
+d, q = spectral_decomposition(a)
 print(d)
-print(p)
+print(q)

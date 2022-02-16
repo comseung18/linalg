@@ -1,3 +1,4 @@
+from math import *
 EPSILON = 1e-7
 
 
@@ -39,9 +40,9 @@ class Matrix:
 
         for i in range(len(arr)):
             if is_col_vec:
-                ret.set_element(i, 0, float(eval(arr[i])))
+                ret.set_element(i, 0, float(arr[i]))
             else:
-                ret.set_element(0, i, float(eval(arr[i])))
+                ret.set_element(0, i, float(arr[i]))
 
         return ret
 
@@ -53,12 +54,22 @@ class Matrix:
         ret = Matrix(r, c)
         for i in range(r):
             for j in range(c):
-                ret.set_element(i, j, float(eval(arr[i][j])))
+                ret.set_element(i, j, float(arr[i][j]))
 
         return ret
 
+    @staticmethod
+    def from_col_vec_list(arr: list):
+        r = arr[0].row_size
+        c = len(arr)
+        ret = Matrix(r, c)
+        for j in range(c):
+            for i in range(r):
+                ret.set_element(i, j, arr[j].get_element(i, 0))
+        return ret
+
     def T(self):
-        ret = Matrix(self.row_size, self.col_size)
+        ret = Matrix(self.col_size, self.row_size)
         for r in range(self.row_size):
             for c in range(self.col_size):
                 ret.set_element(c, r, self.get_element(r, c))
@@ -92,6 +103,40 @@ class Matrix:
     
     def get_element(self, r: int, c: int) -> float:
         return self.data[r][c]
+
+    def set_col_vec(self, c: int, val) -> None:
+        for r in range(self.row_size):
+            self.set_element(r, c, val.get_element(r, 0))
+        return None
+
+    def append_col_vec(self, val) -> None:
+        self.col_size += 1
+        for r in range(self.row_size):
+            self.data[r].append(val.get_element(r, 0))
+        return None
+
+    def get_col_vec(self, c: int):
+        ret = Matrix(self.row_size, 1)
+        for r in range(self.row_size):
+            ret.set_element(r, 0, self.get_element(r, c))
+        return ret
+
+    def get_sub_col_vec(self, c: int, offset: int):
+        ret = Matrix(self.row_size-offset, 1)
+        for r in range(offset, self.row_size):
+            ret.set_element(r-offset, 0, self.get_element(r, c))
+        return ret
+
+    def set_row_vec(self, r: int, val) -> None:
+        for c in range(self.col_size):
+            self.set_element(r, c, val.get_element(0, c))
+        return None
+
+    def get_row_vec(self, r: int):
+        ret = Matrix(1, self.col_size)
+        for c in range(self.col_size):
+            ret.set_element(0, c, self.get_element(r, c))
+        return ret
 
     def __mul__(self, other):
         ret = Matrix(self.row_size, other.col_size)
